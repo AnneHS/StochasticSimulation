@@ -26,8 +26,8 @@ https://diegosalinas-47084.medium.com/plot-the-mandelbrot-set-with-matplotlib-c9
 '''
 
 
-T = 100000 #number of points
-N = 50 #number of iterations per point
+T = 500000 #number of points
+N = 100 #number of iterations per point
 
 def mandelIter(c, max_iter):
     '''
@@ -45,7 +45,7 @@ def randomComplex():
     c = complex(x,y)
     return c,x,y
 
-def mandel_set_random(T, N):
+def mandel_set_random(T, N): #uses random uniform drawn points
     '''
     The distance to 0 must be <2 for any point in the Mandelbrot set. The
     distance is the absolute alue or modulus of complex number c.
@@ -55,7 +55,7 @@ def mandel_set_random(T, N):
     mandel_area = 0
     mandelset_x = []
     mandelset_y = [] #list of the points that belong to the mandelbrot set
-   
+
     for i in range(T):
         c,x,y = randomComplex()
         m = mandelIter(c, N)
@@ -66,7 +66,7 @@ def mandel_set_random(T, N):
     mandel_area = (mandel_area/T)*16
     return (mandelset_x, mandelset_y, mandel_area)
 
-def LHSrandom(T):
+def LHSrandom(T): #latin hypercube
     latin = lhs(T, samples = 2)
     latin = uniform(loc = -2, scale = 4).ppf(latin)
     x,y = latin
@@ -77,7 +77,7 @@ def LHSrandom(T):
         c.append(num)
     return c,x,y
 
-def mandel_set_latin(T, N):
+def mandel_set_latin(T, N): #uses latin hypercube drawn points for mandelbrotset
     '''
     The distance to 0 must be <2 for any point in the Mandelbrot set. The
     distance is the absolute alue or modulus of complex number c.
@@ -99,30 +99,31 @@ def mandel_set_latin(T, N):
     return (mandelset_x, mandelset_y, mandel_area)
 
 mandelarea_random = []
-mandelarea_latin = []
 
-for i in range(N):
+for i in range(N): #computes mandelbrot area for each iteration j < N
     mandelset = mandel_set_random(T, i)
-    mandelarea_random.append(mandelset[2])
-    mandelset = mandel_set_latin(T, i)
-    mandelarea_latin.append(mandelset[2])
+    mandelarea_random.append(mandelset[2]) #for random uniform drawn points
 
-mandelset = mandel_set_random(T, N)  
+    """
+    mandelset = mandel_set_latin(T, i)
+    mandelarea_latin.append(mandelset[2]) #for latin hypercube
+    """
+
+
+mandelset = mandel_set_random(T, N)
 mandelarea_random = np.array(mandelarea_random)
-mandelarea_latin = np.array(mandelarea_latin)
 mandelarea_random = mandelarea_random - mandelset[2]
-mandelarea_latin = mandelarea_latin - mandelset[2]
-#mandelarea.append(mandelset[2])
+#mandelarea_latin = np.array(mandelarea_latin)
+#mandelarea_latin = mandelarea_latin - mandelset[2]
 
 #plt.scatter(mandelset[0], mandelset[1])
 #plt.show()
 
 plt.plot(mandelarea_random, label = "random")
-plt.plot(mandelarea_latin, label = "lhs")
+#plt.plot(mandelarea_latin, label = "lhs")
 plt.xlabel("iterations")
 plt.ylabel("area")
 plt.title("convergence of mandelbrot area with pure random sampling")
 #plt.hlines(0,1,N-1)
-plt.legend()
+#plt.legend()
 plt.show()
-
