@@ -23,21 +23,20 @@ def main():
     sample sizes and number of simulations.
 
     Results are in ../results
-    i, s, area 
+    i, s, area
     '''
 
     # params
-    type_experiment = "Fixeds" #"fixed s"
-    sampling_method = LHS_sampling # random_sampling # LHS_sampling
+    type_experiment = "Fixedi" #"fixed s"
+    sampling_method = random_sampling #LHS_sampling # random_sampling
     mandelbrot_iterations = [1000]
-    sample_sizes = np.arange(100, 10000, 100)
-    number_of_sims = 10
+    sample_sizes = np.arange(100, 10001, 100)
+    number_of_sims = 100
 
     # create csv for results
     file_name = "../results/"+ type_experiment + '_' + sampling_method.__name__ + ".csv"
     if not os.path.isfile(file_name):
         open(file_name, "x")
-
 
     # sample area
     min = -2
