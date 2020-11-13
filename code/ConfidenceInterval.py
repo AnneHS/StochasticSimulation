@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 def main():
     #set experiment type and method over which confidence interval is calculated
     type_experiment = "Fixeds" #"Fixeds" #"Fixedi"
-    sampling_method = "orthogonal_sampling" #"orthogonal_sampling" #"LHS_sampling" # random_sampling
+    sampling_method = "random_sampling" #"orthogonal_sampling" #"LHS_sampling" # random_sampling
 
     #file with results
     file_name = "../results/"+ type_experiment + '_' + sampling_method+ ".csv"
@@ -19,7 +19,7 @@ def main():
         for row in reader:
             if len(row) > 0:
                 results.append(row)
-    del(results[0]) #delete header
+    #del(results[0]) #delete header
     results = np.asarray(results) #for better handling
     results = results.astype(np.float)
 
