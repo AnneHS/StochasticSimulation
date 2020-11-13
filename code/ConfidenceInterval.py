@@ -72,12 +72,13 @@ def main():
     elif type_experiment == "Fixeds":
         x = np.unique(results[:,0])
         xlab = "iterations"
-    plt.plot(x, lower_bound, 'pink', label = 'lower bound')
-    plt.plot(x, upper_bound, 'pink', label = 'upper bound')
-    plt.plot(x, sample_mean,'k',label = 'sample mean')
+    plt.plot(x, lower_bound, 'pink', label = '95% confidence interval')
+    plt.plot(x, upper_bound, 'pink')
+    plt.plot(x, sample_mean,'k',label = 'sample mean', linewidth = 0.5)
     plt.fill_between(np.unique(results[:,1]),lower_bound, upper_bound, color = 'pink')
     plt.xlabel(xlab)
     plt.ylabel("area")
+    plt.xlim(min(x),max(x))
     plt.legend()
     title = "method: " + sampling_method
     plt.title(title)
