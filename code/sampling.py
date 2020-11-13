@@ -5,10 +5,10 @@ from scipy.stats.distributions import uniform, norm
 
 def random_sampling(min, max, s):
     s = int(s)
-    print(s)
+    #print(s)
     x = np.empty(shape=(s, 1))
     y= np.empty(shape=(s, 1))
-    c = []
+    #c = []
 
     for point in range(s):
         x[point], y[point] =  np.random.uniform(min, max, 2)
@@ -18,6 +18,8 @@ def random_sampling(min, max, s):
 
 
 def LHS_sampling(min, max, s):
+    s = int(s)
+    #print(s)
     latin = lhs(s, samples = 2)
     #uniform(loc = -2, scale = 4).ppf(latin)
     latin = uniform(loc = min, scale = (max-min)).ppf(latin)
@@ -30,16 +32,16 @@ def LHS_sampling(min, max, s):
 def orthogonal_sampling(min, max, s):
 
     N = int(math.sqrt(s))
-    print(N)
     samples = s
+    #print(samples)
     r = max - min
 
     scale = r/samples
 
     xlist = [[0 for i in range(N)] for j in range(N)]
     ylist = [[0 for i in range(N)] for j in range(N)]
-    print(xlist)
-    print(ylist)
+    #print(xlist)
+    #print(ylist)
 
     m=0
     for i in range(N):
@@ -56,7 +58,7 @@ def orthogonal_sampling(min, max, s):
     for i in range(N):
         for j in range(N):
             count+=1
-            print(min, scale, xlist[i][j])
+            #print(min, scale, xlist[i][j])
             xvalues.append( min + (scale * (xlist[i][j])) + (np.random.uniform()*scale) )
             yvalues.append( min + (scale * (ylist[j][i])) +  (np.random.uniform()*scale) )
 

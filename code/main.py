@@ -27,11 +27,14 @@ def main():
     '''
 
     # params
-    type_experiment = "Fixedi" #"fixed s"
-    sampling_method = random_sampling #LHS_sampling # random_sampling
-    mandelbrot_iterations = [1000]
-    sample_sizes = np.arange(100, 10001, 100)
+    type_experiment = "Fixeds" #"Fixeds" #"Fixedi"
+    sampling_method = orthogonal_sampling #orthogonal_sampling #LHS_sampling # random_sampling
+    mandelbrot_iterations = np.arange(100,10001,100)#[1000]
+    sample_sizes = [1000] #np.arange(100, 10001, 100)
     number_of_sims = 100
+
+    # set seeed
+    np.random.seed(1)
 
     # create csv for results
     file_name = "../results/"+ type_experiment + '_' + sampling_method.__name__ + ".csv"
@@ -44,6 +47,7 @@ def main():
     total_area = (max - min)*(max - min)
 
     for i in mandelbrot_iterations:
+        print(i)
         for s in sample_sizes:
             for n in range(number_of_sims):
                 x_list, y_list = sampling_method(min, max, s) # SAMPLING s * (x, y)

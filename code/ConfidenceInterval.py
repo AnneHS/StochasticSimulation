@@ -1,14 +1,13 @@
 import numpy as np
 import csv
 import os
-import scipy.stats as st
 import math
 import matplotlib.pyplot as plt
 
 def main():
-    #set parameters
-    type_experiment = "Fixedi" #"fixed s"
-    sampling_method = "random_sampling" #LHS_sampling # random_sampling
+    #set experiment type and method over which confidence interval is calculated
+    type_experiment = "Fixeds" #"Fixeds" #"Fixedi"
+    sampling_method = "orthogonal_sampling" #"orthogonal_sampling" #"LHS_sampling" # random_sampling
 
     #file with results
     file_name = "../results/"+ type_experiment + '_' + sampling_method+ ".csv"
@@ -41,7 +40,10 @@ def main():
         index_i = np.where(results[:,0]==i)
         for j in np.unique(results[index_i,1]): #go through all different amount of sample sizes
             #get all area values of the iteration i and sample size j
-            index_j = np.where(results[:,1]==j)
+            if type_experiment == "Fixedi":
+                index_j = np.where(results[:,1]==j)
+            elif type_experiment == "Fixeds":
+                index_j = index_i
             areas = results[index_j,2]
             areas = np.asarray(areas[0])
 
@@ -59,7 +61,7 @@ def main():
             # Save results
             with open(file_name_CI, 'a') as file:
                 writer = csv.writer(file, delimiter=',')
-                writer.writerow([i, j, mean, lower_a, upper_a])
+                writer.writerow([i, j, mean, lower_a, upper_a, a])
 
     sample_mean = np.asarray(sample_mean)
     lower_bound = np.asarray(lower_bound)
@@ -75,7 +77,7 @@ def main():
     plt.plot(x, lower_bound, 'pink', label = '95% confidence interval')
     plt.plot(x, upper_bound, 'pink')
     plt.plot(x, sample_mean,'k',label = 'sample mean', linewidth = 0.5)
-    plt.fill_between(np.unique(results[:,1]),lower_bound, upper_bound, color = 'pink')
+    plt.fill_between(x,lower_bound, upper_bound, color = 'pink')
     plt.xlabel(xlab)
     plt.ylabel("area")
     plt.xlim(min(x),max(x))
