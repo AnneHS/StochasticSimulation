@@ -15,10 +15,10 @@ def main():
     '''
 
     # params
-    type_experiment = "Fixedi" #"CVs_Fixeds" #"CVs_Fixedi"
+    type_experiment = "Fixeds" #"CVs_Fixeds" #"CVs_Fixedi"
     sampling_method_all = ["random_sampling", "LHS_sampling", "orthogonal_sampling"]
-    mandelbrot_iterations = [1000] #np.arange(100,10001,100) #[1000]
-    sample_sizes = np.arange(100, 10001, 100) #[1000] #np.arange(100, 10001, 100)
+    mandelbrot_iterations = np.arange(100,10001,100)#[1000] #np.arange(100,10001,100) #[1000]
+    sample_sizes = [1000] #np.arange(100, 10001, 100)
     number_of_sims = 100
     control_area = 1.5
 
@@ -47,8 +47,10 @@ def main():
             for row in reader:
                 if len(row) > 0:
                     Y_area.append(row)
-        Y_area = np.asarray(Y_area[:,-1]) #for better handling
+        Y_area = np.asarray(Y_area) #for better handling
         Y_area = results.astype(np.float)
+        Y_area = Y_area[:,2]
+
 
         #new file for CI results
         file_name_CV = "../results/" + "CV_" + type_experiment + '_' + sampling_method + ".csv"
@@ -77,9 +79,9 @@ def main():
                 #calculate the new area estimate with the control variate
                 mean_X = sum(areas_X/len(areas_X))
                 mean_Y = sum(areas_Y/len(areas_Y))
-                c = -1*(sum((areas_X-mean_X)*(areas_Y-mean_Y))/(sum((areas_Y-mean_Y)**2)))
-                #print(areas_X,c,areas_Y)
-                areas_CV = areas_X + c*(areas_Y + control_area)
+                c = -1*(np.cov(areas_X,areas_Y))/(np.var(areas_Y))
+                c = np.unique(c)[0]
+                areas_CV = -1*(areas_X + np.unique(c)[0]*(areas_Y + control_area))
 
                 #calculate confidence interval
                 n = len(areas_CV)
@@ -117,7 +119,6 @@ def main():
         plt.fill_between(x,lower_bound, upper_bound, color = 'pink')
         plt.xlabel(xlab)
         plt.ylabel("area")
-        print(x)
         plt.xlim(min(x),max(x))
         plt.legend()
         title = "method: " + sampling_method
@@ -126,6 +127,7 @@ def main():
         plt.savefig(save_title,dpi=300)
         plt.show()
 
+        """
         #make plot that compares all a values (with and without control variates)
     for sampling_method in sampling_method_all:
         #file with results
@@ -145,8 +147,9 @@ def main():
         #extract the a-values per method
         a_method = results_a[:,-1]
         a_vals.append(a_method)
+        """
 
-    #plot the confidence intervals and the sample mean
+    #plot the confidence intervals and the sample mean of only the control variates
     if type_experiment == "Fixedi":
         x = np.unique(results[:,1])
         xlab = "samples"
@@ -155,12 +158,12 @@ def main():
         x = np.unique(results[:,0])
         xlab = "iterations"
         fixed = "samples"
-    plt.plot(x, a[0], 'b', label = 'random sampling & control variate')
-    plt.plot(x, a[1], 'r', label = 'latin hypercube sampling & control variate')
-    plt.plot(x, a[2], 'g', label = 'orthogonal sampling & control variate')
-    plt.plot(x, a[3], 'c', label = 'random sampling')
-    plt.plot(x, a[4], 'm', label = 'latin hypercube sampling')
-    plt.plot(x, a[5], 'y', label = 'orthogonal sampling')
+    plt.plot(x, a_vals[0], 'b', label = 'random sampling & control variate')
+    plt.plot(x, a_vals[1], 'r', label = 'latin hypercube sampling & control variate')
+    plt.plot(x, a_vals[2], 'g', label = 'orthogonal sampling & control variate')
+    #plt.plot(x, a_vals[3], 'c', label = 'random sampling')
+    #plt.plot(x, a_vals[4], 'm', label = 'latin hypercube sampling')
+    #plt.plot(x, a_vals[5], 'y', label = 'orthogonal sampling')
     plt.xlabel(xlab)
     plt.ylabel("a")
     plt.xlim(min(x),max(x))
