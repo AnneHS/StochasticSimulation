@@ -27,10 +27,10 @@ def main():
     '''
 
     # params
-    type_experiment = "Fixeds" #"Fixeds" #"Fixedi"
-    sampling_method = orthogonal_sampling #orthogonal_sampling #LHS_sampling # random_sampling
-    mandelbrot_iterations = np.arange(100,10001,100)#[1000]
-    sample_sizes = [1000] #np.arange(100, 10001, 100)
+    type_experiment = "Fixedi" #"Fixeds" #"Fixedi"
+    sampling_method = LHS_sampling #orthogonal_sampling #LHS_sampling # random_sampling
+    mandelbrot_iterations = [1000] #np.arange(100,10001,100)#[1000]
+    sample_sizes = np.arange(100, 10001, 100) #[1000] #np.arange(100, 10001, 100)
     number_of_sims = 100
 
     # set seeed
@@ -47,8 +47,9 @@ def main():
     total_area = (max - min)*(max - min)
 
     for i in mandelbrot_iterations:
-        print(i)
+        print("i: ", i)
         for s in sample_sizes:
+            print("s: ", s)
             for n in range(number_of_sims):
                 x_list, y_list = sampling_method(min, max, s) # SAMPLING s * (x, y)
                 mandel_area=0

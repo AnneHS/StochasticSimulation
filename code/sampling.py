@@ -5,9 +5,8 @@ from scipy.stats.distributions import uniform, norm
 
 def random_sampling(min, max, s):
     s = int(s)
-    print(s)
     x = np.empty(shape=(s, 1))
-    y= np.empty(shape=(s, 1))
+    y = np.empty(shape=(s, 1))
     #c = []
 
     for point in range(s):
@@ -19,21 +18,22 @@ def random_sampling(min, max, s):
 
 def LHS_sampling(min, max, s):
     s = int(s)
-    print(s)
-    latin = lhs(s, samples = 2)
+    latin_x = lhs(int(math.sqrt(s)))#, samples = 2)
+    latin_y = lhs(int(math.sqrt(s)))#, samples = 2)
+    latin_x = np.asarray(latin_x).reshape(-1) #make the matrix 1D
+    latin_y = np.asarray(latin_y).reshape(-1) #make the matrix 1D
     #uniform(loc = -2, scale = 4).ppf(latin)
-    latin = uniform(loc = min, scale = (max-min)).ppf(latin)
-    x,y = latin
+    latin_x = uniform(loc = min, scale = (max-min)).ppf(latin_x)
+    latin_y = uniform(loc = min, scale = (max-min)).ppf(latin_y)
+    x,y = latin_x,latin_y
     np.random.shuffle(y)
 
     return x, y
-
 
 def orthogonal_sampling(min, max, s):
 
     N = int(math.sqrt(s))
     samples = s
-    print(samples)
     r = max - min
 
     scale = r/samples
