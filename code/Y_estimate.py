@@ -24,12 +24,12 @@ def main():
     '''
 
     # params
-    type_experiment = "Fixeds" #"CVs_Fixeds" #"CVs_Fixedi"
-    sampling_method_all = [random_sampling, LHS_sampling]#, orthogonal_sampling]
-    mandelbrot_iterations = np.arange(100,10001,100)#[1000] #np.arange(100,10001,100)#[1000]
-    sample_sizes = [1000] #np.arange(100, 10001, 100)
+    type_experiment = "Fixedi" #"CVs_Fixeds" #"CVs_Fixedi"
+    sampling_method_all = [random_sampling, LHS_sampling, orthogonal_sampling]
+    mandelbrot_iterations = [1000] #np.arange(100,10001,100)#[1000]
+    sample_sizes =  np.arange(100,10001,100)#[1000] #np.arange(100, 10001, 100)
     number_of_sims = 100
-    control_area = 1.5
+    control_area = 1.6
 
     # sample area
     min = -2

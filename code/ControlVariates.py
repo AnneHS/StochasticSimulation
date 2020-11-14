@@ -20,7 +20,7 @@ def main():
     mandelbrot_iterations = np.arange(100,10001,100)#[1000] #np.arange(100,10001,100) #[1000]
     sample_sizes = [1000] #np.arange(100, 10001, 100)
     number_of_sims = 100
-    control_area = 1.5
+    control_area = 1.6
 
     l = 1.96 #lambda for p = 95%
 
@@ -81,7 +81,7 @@ def main():
                 mean_Y = sum(areas_Y/len(areas_Y))
                 c = -1*(np.cov(areas_X,areas_Y))/(np.var(areas_Y))
                 c = np.unique(c)[0]
-                areas_CV = -1*(areas_X + np.unique(c)[0]*(areas_Y + control_area))
+                areas_CV = (areas_X + c*(areas_Y - mean_Y))
 
                 #calculate confidence interval
                 n = len(areas_CV)
