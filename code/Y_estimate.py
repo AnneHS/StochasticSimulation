@@ -42,7 +42,6 @@ def main():
         if not os.path.isfile(file_name):
             open(file_name, "x")
 
-        Y_area = []
         #generate control variate Y
         for i in mandelbrot_iterations:
             print("i: ", i)
@@ -51,14 +50,13 @@ def main():
                 for n in range(number_of_sims):
                     x_list, y_list = sampling_method(min, max, s) # SAMPLING s * (x, y)
 
-                    control_Y = 0
+                    Y_area = 0
                     for x, y in zip(x_list, y_list):
                         #estimate the control variate area (1.5)
                         in_control = inControlVariate(x,y,control_area)
                         if in_control:
-                            control_Y +=1
-                    control_Y = (control_Y/s)*total_area
-                    Y_area.append(control_Y)
+                            Y_area +=1
+                    Y_area = (Y_area/s)*total_area
 
                     # Save results
                     with open(file_name, 'a') as file:
