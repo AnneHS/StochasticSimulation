@@ -167,8 +167,8 @@ def main():
         results_a = results_a.astype(np.float)
 
         #extract the a-values per method
-        a_vals = results_a[:,-1]
-        a.append(a_vals)
+        a_method = results_a[:,-1]
+        a_vals.append(a_method)
 
     #plot the confidence intervals and the sample mean
     if type_experiment == "Fixedi":
