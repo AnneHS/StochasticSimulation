@@ -27,10 +27,10 @@ def main():
     '''
 
     # params
-    type_experiment = "Fixedi" #"Fixeds" #"Fixedi"
+    type_experiment = "Fixeds" #"Fixeds" #"Fixedi"
     sampling_method = LHS_sampling #orthogonal_sampling #LHS_sampling # random_sampling
-    mandelbrot_iterations = [1000] #np.arange(100,10001,100)#[1000]
-    sample_sizes = np.arange(100, 10001, 100) #[1000] #np.arange(100, 10001, 100)
+    mandelbrot_iterations = np.arange(100,10001,100)#[1000] #np.arange(100,10001,100)#[1000]
+    sample_sizes = [1000] #np.arange(100, 10001, 100)
     number_of_sims = 100
 
     # set seeed
