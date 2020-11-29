@@ -40,8 +40,6 @@ def orthogonal_sampling(min, max, s):
 
     xlist = [[0 for i in range(N)] for j in range(N)]
     ylist = [[0 for i in range(N)] for j in range(N)]
-    #print(xlist)
-    #print(ylist)
 
     m=0
     for i in range(N):
@@ -58,7 +56,6 @@ def orthogonal_sampling(min, max, s):
     for i in range(N):
         for j in range(N):
             count+=1
-            #print(min, scale, xlist[i][j])
             xvalues.append( min + (scale * (xlist[i][j])) + (np.random.uniform()*scale) )
             yvalues.append( min + (scale * (ylist[j][i])) +  (np.random.uniform()*scale) )
 
