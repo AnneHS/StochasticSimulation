@@ -51,7 +51,6 @@ class Customer():
             with server.request() as req:
                 # Wait for server
                 yield req
-                print(env.now, arrival)
                 waiting_time = env.now-arrival # waiting time
 
                 # Time until departure
@@ -62,10 +61,10 @@ class Customer():
 
         if not os.path.isfile(file_name):
                 open(file_name, 'x')
+
         # Save results
         with open(file_name, 'a') as resultsFile:
             writer = csv.writer(resultsFile)
-            print(waiting_time)
             writer.writerow([self.n, self.rho, arrival, waiting_time])
 
 def source(env, server, l, mu, n , rho, exp):
@@ -84,7 +83,6 @@ def save_means(n, nr_of_batches, t, exp):
         Divide dataset into given number of batches based on arrival time
         For each of the batches, save rho + corresponding mean waiting time
     '''
-
     # Open temp results file
     temp_file = "../data/exp"+ str(exp)+ "_mm" + str(n)  + "_temp.csv"
     df = pd.read_csv(temp_file)
@@ -97,7 +95,6 @@ def save_means(n, nr_of_batches, t, exp):
         # Select part of temp df with n == given n && rho == current rho
         relevant_data = df.loc[df['n'] == n]
         relevant_data = relevant_data.loc[relevant_data['rho'] == rho]
-        print(relevant_data)
 
         # Create file for current exp and n
         file_name = "../data/exp"+ str(exp)+ "_mm" + str(n)  + "_results.csv"
@@ -109,35 +106,15 @@ def save_means(n, nr_of_batches, t, exp):
         for i in range(nr_of_batches):
             with open(file_name, 'a') as resultsFile:
 
-                # Save results per batch:rho, mean waiting time
+                # Save results per batch: rho, mean waiting time
                 writer = csv.writer(resultsFile)
                 writer.writerow([rho,
                     relevant_data[(relevant_data["arrival"] >= i * batch_size) & (relevant_data["arrival"] < (i+1) * batch_size)]["waiting_time"].mean(),
                 ])
 
-    # Remove temp results (new temp for new rho)
-    #os.remove(temp_file)
-    '''
-    # Results file
-    file_name = "../data/exp"+ str(exp)+ "_mm" + str(n)  + "_results.csv"
-    if not os.path.isfile(file_name):
-            open(file_name, 'x')
+    # Remove temp results
+    os.remove(temp_file)
 
-    # Save results per batch: mean waiting time, mean length queue
-    batch_size = round(t/nr_of_batches)
-    for i in range(nr_of_batches):
-        #print(df[(df["arrival"] >= i * batch_size) & (df["arrival"] < (i+1) * batch_size)])
-
-        with open(file_name, 'a') as resultsFile:
-            writer = csv.writer(resultsFile)
-            writer.writerow([
-                df[(df["arrival"] >= i * batch_size) & (df["arrival"] < (i+1) * batch_size)]["waiting_time"].mean(),
-                #df[(df["arrival"] >= i * batch_size) & (df["arrival"] < (i+1) * batch_size)]["in_system"].mean()
-            ])
-
-    # Remove temp results (new temp for new rho)
-    os.remove(temp_results)
-    '''
 def main():
     #variables
     mu = 1 #capacity of each of n equal servers
