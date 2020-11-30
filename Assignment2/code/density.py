@@ -40,12 +40,11 @@ def source(env, server, l, mu):
 
 def main():
     #variables
-    runs = 100
-    #rho = 0.9 #system load
+    runs = 500
     mu = 1 #capacity of each of n equal servers
     n = 1 #amount of servers
     l = 0.9 #arrival rate into the whole system (lambda)
-    rho = l/(n*mu)
+    rho = (l*n)/(n*mu) #(lambda * n) to ensure rho is same across all n, then lambda has to be higher
     t = 1000 #end timee
 
     if rho >= 1: #rho cant be larger than 1, raise error, to ensure queue is stable
