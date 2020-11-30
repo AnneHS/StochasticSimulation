@@ -65,7 +65,7 @@ def save_means(n, nr_of_batches, t, rho):
     df.columns=["arrival", "waiting_time", "len_queue"]
 
     # Results file
-    file_name = "../data/mm" + str(n)  + "_results.csv"
+    file_name = "../data/mm" + str(n)  + "_t"+ str(t) +"_results.csv"
     if not os.path.isfile(file_name):
             open(file_name, 'x')
 
@@ -90,7 +90,7 @@ def save_means(n, nr_of_batches, t, rho):
 def main():
     mu = 1 #capacity of each of n equal servers
     n = 2 #amount of servers
-    t = 10000 #end timee
+    t = 100000 #end timee
     RANDOM_SEED = 2
 
     rhos = [0.05, 0.1, 0.15, 0.20, 0.25, 0.30, 0.35, 0.40, 0.45, 0.50, 0.55, 0.60, 0.65, 0.7, 0.75, 0.8, 0.85, 0.90, 0.95] # System load
