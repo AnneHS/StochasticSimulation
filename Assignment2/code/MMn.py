@@ -97,7 +97,6 @@ def save_means(n, t, exp):
         relevant_data = df.loc[df['n'] == n]
         relevant_data = relevant_data.loc[relevant_data['rho'] == rho]
         nr_of_batches = round(math.sqrt(len(relevant_data)))
-        print(len(relevant_data),nr_of_batches)
 
         # Create file for current exp and n
         file_name = "../data/exp"+ str(exp)+ "_mm" + str(n)  + "_results.csv"
@@ -124,7 +123,7 @@ def main():
     N = [1,2,4] #amount of servers
     LAMBDA = np.arange(0.05,1,0.05) #arrival rate into the whole system (lambda=rho, because mu=1)
 
-    t = 1000 #end timee
+    t = 100000 #end timee
 
     #0 = normal(2.2); 1 = shortest job prio (2.3); 2 = long tail distribution (2.4); 3 = deterministic
     exp = 0
@@ -150,10 +149,9 @@ def main():
             server = sp.PriorityResource(env, capacity=n)
             env.process(source(env, server, l*n , mu, n , rho, exp))
             env.run(until = t)
-
-    # Save results per batch
-    for n in N:
+        # Save results per batch
         save_means(n, t, exp)
+
 
 if __name__ == "__main__":
     main()

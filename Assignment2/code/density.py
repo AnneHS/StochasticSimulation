@@ -73,7 +73,7 @@ def main():
     sns.distplot(Wtimes_mean)#, hist=True, kde=False)
     title = "density plot of waiting times for n = 1, rho = " + str(rho)
     plt.title(title)
-    plt.xlabel("waiting time")
+    plt.xlabel("density")
     plt.ylabel("customers")
     plt.show()
 
