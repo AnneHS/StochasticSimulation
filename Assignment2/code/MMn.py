@@ -12,7 +12,7 @@ class Customer():
         self.env = env
         self.name = name
         if exp == 2: # if longtaildistribution
-            p = np.random.normal(0,1)
+            p = np.random.uniform(0,1)
             if p > 0.75:
                 job = random.expovariate(mu*5) #mu = 5 for 25%
             else:
@@ -34,6 +34,19 @@ class Customer():
                 # Wait for server
                 yield req
                 waiting_time = env.now-arrival # waiting time
+
+                # Time until departure
+                yield env.timeout(self.joblength) # wait until server is finished
+
+                # File for temp results
+                file_name = "../data/exp"+ str(self.exp)+ "_mm" + str(self.n)  + "_temp.csv"
+
+                if not os.path.isfile(file_name):
+                        open(file_name, 'x')
+                # Save results
+                with open(file_name, 'a') as resultsFile:
+                    writer = csv.writer(resultsFile)
+                    writer.writerow([self.n, self.rho, arrival, waiting_time])
         else:
             with server.request() as req:
                 # Wait for server
@@ -41,11 +54,11 @@ class Customer():
                 print(env.now, arrival)
                 waiting_time = env.now-arrival # waiting time
 
-        # Time until departure
-        yield env.timeout(self.joblength) # wait until server is finished
+                # Time until departure
+                yield env.timeout(self.joblength) # wait until server is finished
 
-        # File for temp results
-        file_name = "../data/exp"+ str(self.exp)+ "_mm" + str(self.n)  + "_temp.csv"
+                # File for temp results
+                file_name = "../data/exp"+ str(self.exp)+ "_mm" + str(self.n)  + "_temp.csv"
 
         if not os.path.isfile(file_name):
                 open(file_name, 'x')
@@ -106,7 +119,7 @@ def save_means(n, nr_of_batches, t, exp):
     #os.remove(temp_file)
     '''
     # Results file
-    file_name = "../data/exp"+ str(self.exp)+ "_mm" + str(self.n)  + "_results.csv"
+    file_name = "../data/exp"+ str(exp)+ "_mm" + str(n)  + "_results.csv"
     if not os.path.isfile(file_name):
             open(file_name, 'x')
 
@@ -131,7 +144,7 @@ def main():
     N = [1,2,4] #amount of servers
     LAMBDA = np.arange(0.1,1,0.05) #arrival rate into the whole system (lambda=rho, because mu=1)
 
-    t = 100 #end timee
+    t = 1000 #end timee
 
     #0 = normal(2.2); 1 = shortest job prio (2.3); 2 = long tail distribution (2.4); 3 = deterministic
     exp = 0
