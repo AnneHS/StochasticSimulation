@@ -30,7 +30,7 @@ class Customer():
         arrival = env.now
 
         if self.exp == 1:
-            with server.request(priority = self.joblength):
+            with server.request(priority = self.joblength) as req:
                 # Wait for server
                 yield req
                 waiting_time = env.now-arrival # waiting time
@@ -95,12 +95,12 @@ def main():
     N = [1,2,4] #amount of servers
     LAMBDA = np.arange(0.1,1,0.05) #arrival rate into the whole system (lambda=rho, because mu=1)
 
-    t = 100000 #end timee
+    t = 100 #end timee
 
     #0 = normal(2.2); 1 = shortest job prio (2.3); 2 = long tail distribution (2.4); 3 = deterministic
-    exp = 0
+    exp = 3
     if exp == 1:
-        N = 1 #priority to shortest jobs only have to be exectuted for n = 1
+        N = [1] #priority to shortest jobs only have to be exectuted for n = 1
 
     # Setup and start the simulation
     for n in N:
@@ -114,6 +114,7 @@ def main():
                 text = "start of longtaildistribution M/D/"
             elif exp == 3:
                 text = "start of M/D/"
+
             rho = (l*n)/(n*mu) #(lambda*n) to ensure rho is same across all n, then lambda has to be higher
             print(text, n , ', lambda = ', l, ", mu = ", mu, "rho = ", rho,", exp = ", exp )
             env = sp.Environment()
