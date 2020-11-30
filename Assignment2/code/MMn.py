@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import os
 import pandas as pd
 import numpy as np
+import math
 
 class Customer():
     def __init__(self, env, name, mu, n, rho, exp):
@@ -77,7 +78,7 @@ def source(env, server, l, mu, n , rho, exp):
         t = random.expovariate(l) #arrival time of the next customer
         yield env.timeout(t) #timeout until arrival time of next customer
 
-def save_means(n, nr_of_batches, t, exp):
+def save_means(n, t, exp):
     '''
     For a given n and exp, for each of the unique rho values:
         Divide dataset into given number of batches based on arrival time
@@ -95,6 +96,8 @@ def save_means(n, nr_of_batches, t, exp):
         # Select part of temp df with n == given n && rho == current rho
         relevant_data = df.loc[df['n'] == n]
         relevant_data = relevant_data.loc[relevant_data['rho'] == rho]
+        nr_of_batches = round(math.sqrt(len(relevant_data)))
+        print(len(relevant_data),nr_of_batches)
 
         # Create file for current exp and n
         file_name = "../data/exp"+ str(exp)+ "_mm" + str(n)  + "_results.csv"
@@ -119,7 +122,7 @@ def main():
     #variables
     mu = 1 #capacity of each of n equal servers
     N = [1,2,4] #amount of servers
-    LAMBDA = np.arange(0.1,1,0.05) #arrival rate into the whole system (lambda=rho, because mu=1)
+    LAMBDA = np.arange(0.05,1,0.05) #arrival rate into the whole system (lambda=rho, because mu=1)
 
     t = 1000 #end timee
 
@@ -150,8 +153,7 @@ def main():
 
     # Save results per batch
     for n in N:
-        nr_of_batches=4 #TODO: NR OF BATCHES???????????????????????????
-        save_means(n, nr_of_batches, t, exp)
+        save_means(n, t, exp)
 
 if __name__ == "__main__":
     main()
