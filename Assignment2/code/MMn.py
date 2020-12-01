@@ -139,6 +139,8 @@ def main():
         # Setup and start the simulation
         for n in N:
             for l in LAMBDA:
+                l = round(l,2)
+
                 #just for a nice print during the simulations
                 if exp == 0:
                     text = "start of FIFO M/M/"
