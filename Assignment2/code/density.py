@@ -10,7 +10,7 @@ import numpy as np
 
 def main():
     exp = 1 #capacity of each of n equal servers
-    N = [1,2] #amount of servers
+    N = [1,2,4] #amount of servers
     #0 = normal(2.2); 1 = shortest job prio (2.3); 2 = long tail distribution (2.4); 3 = deterministic
     exp = 0
     if exp == 1:
@@ -23,7 +23,7 @@ def main():
 
         # For each unique rho value
         rhos = df.rho.unique().tolist()
-        rhos = [0.05, 0.95] #if want to check one specific rho
+        rhos = [0.05, 0.5, 0.95] #if want to check one specific rho
 
         for rho in rhos:
             waiting_time = df.loc[df['rho'] == rho]

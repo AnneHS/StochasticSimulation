@@ -116,41 +116,47 @@ def save_means(n, t, exp):
 
     # Remove temp results
     os.remove(temp_file)
+    print("batches finished of M/M/",n)
 
 def main():
     #variables
     mu = 1 #capacity of each of n equal servers
     N = [1,2,4] #amount of servers
-    LAMBDA = np.arange(0.05,1,0.05) #arrival rate into the whole system (lambda=rho, because mu=1)
-
-    t = 100000 #end timee
+    LAMBDA = np.arange(0.1,1,0.1) #arrival rate into the whole system (lambda=rho, because mu=1)
+    LAMBDA = np.append(LAMBDA,[0.95,0.99])
+    print(LAMBDA)
+    t = 200000 #end timee
 
     #0 = normal(2.2); 1 = shortest job prio (2.3); 2 = long tail distribution (2.4); 3 = deterministic
-    exp = 0
-    if exp == 1:
-        N = [1] #priority to shortest jobs only have to be exectuted for n = 1
+    experiments = [0,1,2,3]
 
-    # Setup and start the simulation
-    for n in N:
-        for l in LAMBDA:
-            #just for a nice print during the simulations
-            if exp == 0:
-                text = "start of FIFO M/M/"
-            elif exp == 1:
-                text = "start of shortest job priority M/M/"
-            elif exp == 2:
-                text = "start of longtaildistribution M/D/"
-            elif exp == 3:
-                text = "start of M/D/"
+    for exp in experiments:
+        if exp == 1:
+            N = [1]
+        else:
+            N = [1,2,4]
 
-            rho = (l*n)/(n*mu) #(lambda*n) to ensure rho is same across all n, then lambda has to be higher
-            print(text, n , ', lambda = ', l, ", mu = ", mu, "rho = ", rho,", exp = ", exp )
-            env = sp.Environment()
-            server = sp.PriorityResource(env, capacity=n)
-            env.process(source(env, server, l*n , mu, n , rho, exp))
-            env.run(until = t)
-        # Save results per batch
-        save_means(n, t, exp)
+        # Setup and start the simulation
+        for n in N:
+            for l in LAMBDA:
+                #just for a nice print during the simulations
+                if exp == 0:
+                    text = "start of FIFO M/M/"
+                elif exp == 1:
+                    text = "start of shortest job priority M/M/"
+                elif exp == 2:
+                    text = "start of longtaildistribution M/D/"
+                elif exp == 3:
+                    text = "start of M/D/"
+
+                rho = (l*n)/(n*mu) #(lambda*n) to ensure rho is same across all n, then lambda has to be higher
+                print(text, n , ', lambda = ', l, ", mu = ", mu, "rho = ", rho,", exp = ", exp )
+                env = sp.Environment()
+                server = sp.PriorityResource(env, capacity=n)
+                env.process(source(env, server, l*n , mu, n , rho, exp))
+                env.run(until = t)
+            # Save results per batch
+            save_means(n, t, exp)
 
 
 if __name__ == "__main__":
