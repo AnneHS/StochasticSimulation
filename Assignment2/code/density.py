@@ -9,30 +9,40 @@ import seaborn as sns
 import numpy as np
 
 def main():
-    exp = 1 #capacity of each of n equal servers
-    N = [1,2,4] #amount of servers
+    #N = [1] #amount of servers
+
     #0 = normal(2.2); 1 = shortest job prio (2.3); 2 = long tail distribution (2.4); 3 = deterministic
-    exp = 0
-    if exp == 1:
-        N = [1] #priority to shortest jobs only have to be exectuted for n = 1
+    experiments = [0,1,2,3]
+    #experiments=[0]
+    for exp in experiments:
+        if exp == 0:
+            N = [1,2,4]
+        else:
+            N = [1]
 
-    for n in N:
-        file = "../data/exp"+ str(exp)+ "_mm" + str(n)  + "_results.csv"
-        df = pd.read_csv(file)
-        df.columns=["rho","waiting_time"]
+        for n in N:
+            file = "../data/exp"+ str(exp)+ "_mm" + str(n)  + "_results.csv"
+            df = pd.read_csv(file)
+            df.columns=["rho","waiting_time"]
 
-        # For each unique rho value
-        rhos = df.rho.unique().tolist()
-        rhos = [0.05, 0.5, 0.95] #if want to check one specific rho
+            # For each unique rho value
+            rhos = df.rho.unique().tolist()
+            rhos=[0.1]
 
-        for rho in rhos:
-            waiting_time = df.loc[df['rho'] == rho]
-            sns.distplot(waiting_time)#, hist=True, kde=False)
-            title = "density plot of waiting times for n = ", n, ", and $\rho$ = " + str(rho)
-            plt.title(title)
-            plt.xlabel("density")
-            plt.ylabel("customers")
-            plt.show()
+            for rho in rhos:
+                this_data = df.loc[df['rho'] == rho]
+                #print(this_data["waiting_time"])
+                #sns.distplot(waiting_time, norm_hist=True)#, hist=True, kde=False)
+                sns.kdeplot(this_data["waiting_time"],shade=True)
+    title = "density plot of waiting times for rho = 0.1"
+    plt.title(title)
+    plt.xlabel("waiting time")
+    plt.ylabel("density")
+    plt.xlim([0,None])
+    plt.ylim([0,None])
+    plt.legend(["M/M/1", "M/M/2","M/M/4","M/M/1, priority", "M/M/1, longtail distribution","M/D/1"])
+    plt.savefig("../plots/density_rho=0.1.jpg", dpi=300)
+    plt.show()
 
 
 if __name__ == "__main__":
