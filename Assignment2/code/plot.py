@@ -5,8 +5,8 @@ import os
 import pandas as pd
 import numpy as np
 
-experiments = [0]
-server_count = [1, 2, 4]
+experiments = [0, 1]
+server_count = [1]
 
 for exp in experiments:
     means = []
@@ -23,7 +23,12 @@ for exp in experiments:
 
     # plot
     for i in range(len(server_count)):
-        system_name = 'M/M/' + str(server_count[i])
+        if exp == 0:
+            system_name = 'M/M/' + str(server_count[i]) + ' FIFO'
+        elif exp == 1:
+
+            system_name = 'M/M/' + str(server_count[i]) + ' Priority'
+
         mean = means[i]
         stdev = stdevs[i]
 
@@ -34,6 +39,6 @@ for exp in experiments:
         plt.xlabel(r'$\rho$')
         plt.ylabel('Average waiting time')
 
-    fig_name = '../plots/exp{}_means_std'.format(exp)
-    plt.savefig(fig_name,dpi=300)
-    plt.show()
+fig_name = '../plots/exp1_means_std' #.format(exp)
+plt.savefig(fig_name,dpi=300)
+plt.show()
