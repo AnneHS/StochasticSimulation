@@ -37,7 +37,7 @@ ALPHA = 0.005                   # alpha used for cooling
 COOLING_SCHEDULE = 'linear'     # 'linear', 'exponential', 'log', 'quadratic'
 MAX_ITERATION = 10000           # currently not used
 
-def simulated_annealing(N, initial_route, schedule, non_monotonic):
+def simulated_annealing(N, initial_route, cooling_type, non_monotonic):
     '''
     Simulated annealing with 2-opt.
     '''
@@ -60,7 +60,7 @@ def simulated_annealing(N, initial_route, schedule, non_monotonic):
                     current_route = new_route
 
                 # Cooling: adjust temperature
-                t_current = cooling_schedule(T_START, k, ALPHA, schedule)
+                t_current = cooling_schedule(T_START, k, ALPHA, cooling_type)
 
                 if k%500 == 0:
                     print('iteration: {}'.format(k))
