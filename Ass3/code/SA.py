@@ -1,28 +1,77 @@
 import numpy as np
-from load import load
 import random
 import copy
+import math
+import random
 
 from city import City, Route
+from helpers import load, plot_route, cooling_schedule
 
-def two_opt(N, initial_route):
+'''
+TODO:
+In all cases, you must start with relatively small problems, so that you can
+experiment with the SA parameters. Next you should try to solve (much) larger
+problems and try to find out how well your solution scales for these problems.
+
+Goals:
+(i)   Find good local optimum
+(ii)  Experiment with different cooling schedules and observe their effects on
+        convergence
+(iii) Experiment with length of Markov chains, what is the effect on convergence
+
+( (iv) Experiment with the initial temperature, etc.)
+
+https://nathanrooy.github.io/posts/2020-05-14/simulated-annealing-with-python/
+'''
+
+T_START = 100
+T_MIN = 0.0000001
+ALPHA = 0.005
+COOLING_SCHEDULE = 'linear' #'nlem' #'linear'
+MAX_ITERATION = 10000
+
+def simulated_annealing(N, initial_route, schedule, non_monotonic):
     '''
-    Switches 2 cities in route until no improvement.
+    Simulated annealing with 2-opt
     '''
-    
+    t_current = T_START
+    current_route = initial_route
     best_route = initial_route
-    improved = True
-    while improved:
-        improved = False
+
+    k=0
+    while t_current > T_MIN:
         for i in range(N-3):
             for j in range(i+2, N-1):
-                print(best_route.get_length())
-                new_route = best_route.switch(i, j)
 
-                if new_route.get_length() <= best_route.get_length():
+                new_route = current_route.switch(i, j)
+                length_difference = current_route.get_length() - new_route.get_length()
+
+                if length_difference > 0:
+                    current_route = new_route
                     best_route = new_route
-                    improved = True
+                elif random.uniform(0, 1) < math.exp(length_difference/t_current):
+                    current_route = new_route
 
+                t_current = cooling_schedule(T_START, k, ALPHA, schedule)
+
+                if k%500 == 0:
+                    print('iteration: {}'.format(k))
+                    print('t: {}'.format(t_current))
+                    print('best: {}\n'.format(best_route.get_length()))
+
+                '''
+                if non_monotonic:
+                    current_length = current_route.get_length()
+                    best_length = best_route.get_length()
+                    t_current *= (1+(current_length-best_length)/current_length)
+                '''
+
+                if t_current <= T_MIN:
+                    return best_route
+
+                k+=1
+
+    return best_route
 
 problem = 'eil51'## .tsp.txt'
 N, adjacency_matrix, opt_path, opt_path_len, cities  = load(problem)
@@ -35,4 +84,5 @@ random.shuffle(shuffled)
 for city in shuffled:
     initial_route.add(city)
 
-two_opt(N, initial_route)
+route = simulated_annealing(N, initial_route, COOLING_SCHEDULE, non_monotonic=False)
+plot_route(cities, route)

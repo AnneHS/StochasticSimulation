@@ -1,3 +1,5 @@
+import numpy as np
+
 class City(object):
     def __init__(self, id, N, x, y):
         self.id = id
@@ -7,6 +9,8 @@ class City(object):
 
     def __str__(self):
         return str(self.id)
+
+
 
 class Route(object):
     def __init__(self, N, adjacency_matrix):
@@ -21,7 +25,6 @@ class Route(object):
             self.length += self.adjacency_matrix[last_city.id][new_city.id]
 
         self.route+=[new_city]
-
 
     def get_length(self):
         return self.length
@@ -52,6 +55,13 @@ class Route(object):
             new_route.add_city()
 
         return new_route
+
+    def get_coordinates(self):
+        coordinates = []
+        for city in self.route:
+            coordinates.append([city.x, city.y])
+
+        return np.array(coordinates)
 
     def __repr__(self):
         return repr([str(city) for city in self.route])
