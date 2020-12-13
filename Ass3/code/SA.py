@@ -25,17 +25,24 @@ https://nathanrooy.github.io/posts/2020-05-14/simulated-annealing-with-python/
 
 ## TODO:
 - cooling schedules afmaken
-- cooling schedules automatiseren (alpha)
-- markov chain
+- cooling schedules automatiseren (alpha) --> Formules om alpha uit te rekenen
+- markov chain length --> the size of the city
 - discussion voor alpha/T etc.
 - resultaten opslaan: beste route + lengte
 '''
 
-T_START = 100                   # starting temperature
+T_START = 5                   # starting temperature
 T_MIN = 0.0000001               # min temperature
-ALPHA = 0.005                   # alpha used for cooling
-COOLING_SCHEDULE = 'linear'     # 'linear', 'exponential', 'log', 'quadratic'
-MAX_ITERATION = 10000           # currently not used
+COOLING_SCHEDULE = 'exponential'     # 'linear', 'exponential', 'log', 'quadratic'
+MAX_ITERATION = 1000           # currently not used --> now used for alpha
+ALPHA = True                   # alpha used for cooling, True then alpha on basis of iterations
+if ALPHA:
+    if COOLING_SCHEDULE == 'linear':
+        ALPHA = T_START/MAX_ITERATION
+    elif COOLING_SCHEDULE == 'exponential':
+        ALPHA = 0.9 # TODO
+    else:
+        ALPHA = 0.05
 
 def simulated_annealing(N, initial_route, cooling_type, non_monotonic):
     '''
@@ -96,6 +103,7 @@ for city in shuffled:
 
 # Start SA
 route = simulated_annealing(N, initial_route, COOLING_SCHEDULE, non_monotonic=False)
+print(ALPHA)
 
 # Plot route on 2D plane
 plot_route(cities, route)
