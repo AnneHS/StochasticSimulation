@@ -58,7 +58,7 @@ def simulated_annealing(N, initial_route, cooling_type, t_start):
     route_lengths = [initial_route.get_length()]
 
     k=0
-    while t_current > T_MIN:
+    while t_current > T_MIN and k < MAX_ITERATION:
         for i in range(N-3):
             for j in range(i+2, N-1):
                 new_route = current_route.two_opt(i, j)
