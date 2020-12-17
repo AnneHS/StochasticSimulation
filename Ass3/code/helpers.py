@@ -68,9 +68,9 @@ def load(problem):
     # Read optimal route data
     opt_file_name = '{}.opt.tour.txt'.format(problem)
     opt_file = open('../input/'+ opt_file_name).read().splitlines()
-    route_data = opt_file[5:56]
 
     # Extract optimal route and length
+    route_data = opt_file[5:56]
     opt_route, opt_route_length = extract_optimal_route(N, route_data,adjacency_matrix)
 
     return N, adjacency_matrix, opt_route, opt_route_length, cities
