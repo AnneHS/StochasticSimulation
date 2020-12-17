@@ -49,7 +49,7 @@ if ALPHA:
 
 
 
-def simulated_annealing(N, initial_route, cooling_type, markov_length, t_start):
+def simulated_annealing(N, initial_route, cooling_type, markov_length, t_start, max_iter):
     '''
     Simulated annealing with 2-opt.
     '''
@@ -58,9 +58,9 @@ def simulated_annealing(N, initial_route, cooling_type, markov_length, t_start):
     best_route = initial_route      # best route so far
     chain_length = 0                # current Markov chain length
     current_iteration = 0           # current iteration
+    k = 0
 
-    MAX_ITER = 1000
-    while t_current > T_MIN:
+    while t_current > T_MIN and k < max_iter:
         for i in range(N-3):
             for j in range(i+2, N-1):
 
@@ -78,15 +78,14 @@ def simulated_annealing(N, initial_route, cooling_type, markov_length, t_start):
 
                 # Inner-loop stopping condition: Markov Chain length
                 if chain_length == markov_length:
-                    t_current = cooling_schedule(t_start, current_iteration, cooling_type, MAX_ITER)
+                    t_current = cooling_schedule(t_start, current_iteration, cooling_type, max_iter)
                     chain_length=0
                     current_iteration+=1
 
                 # Outer-loop stopping condition: temperature
                 if t_current <= T_MIN:
                     return best_route
-
-
+                k += 1
     return best_route
 
 if __name__ == '__main__':
@@ -95,11 +94,13 @@ if __name__ == '__main__':
     schedule = 'linear'          #'linear', 'exponential', 'log', 'quadratic'
 
     # Params
-    ITERATIONS = 100 #300                               # SA iterations
-    # = np.arange(0, 51, 5)
-    MARKOV_LENGTHS = [1, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50]
+    ITERATIONS = 10 #300                               # SA iterations
+    MARKOV_LENGTHS = (np.arange(10, 101, 10))
+    MARKOV_LENGTHS = np.insert(MARKOV_LENGTHS, 0, 1)
+    print(MARKOV_LENGTHS)
     T_MIN = 0.001
     T_START = 300
+    MAX_ITER = 1000
 
     # Load problem
     N, adjacency_matrix, opt_path, opt_path_len, cities  = load(problem)
@@ -127,7 +128,7 @@ if __name__ == '__main__':
 
             # SA
             starting_route = copy.deepcopy(initial_route)
-            best_route = simulated_annealing(N, starting_route, schedule, markov_length, T_START)
+            best_route = simulated_annealing(N, starting_route, schedule, markov_length, T_START, MAX_ITER)
 
             # Save results
             with open(file_name, 'a') as resultsFile:
