@@ -95,10 +95,10 @@ if __name__ == '__main__':
 
     # Params
     ITERATIONS = 10 #300                               # SA iterations
-    MARKOV_LENGTHS = 1                             # Of list gebruiken?
+    MARKOV_LENGTHS = np.arange(1, 151, 10)
+    print(MARKOV_LENGTHS)
     T_MIN = 0.0000001
-    #starting_temperatures = TEMPERATURES[schedule]
-    starting_temperatures = [300]
+    T_START = 300
 
     # Load problem
     N, adjacency_matrix, opt_path, opt_path_len, cities  = load(problem)
@@ -115,25 +115,21 @@ if __name__ == '__main__':
     # Run SA
     print('Running for cooling_schedule: {}'.format(schedule))
 
-    for markov_length in range(1, MARKOV_LENGTHS+1):
-        print('Markov length: {}/{}'.format(markov_length, MARKOV_LENGTHS))
+    for markov_length in MARKOV_LENGTHS:
+        print('Markov length: {}'.format(markov_length))
 
-        for t_start in starting_temperatures:
-            print('Starting temperature: {}'.format(t_start))
+        for i in range(ITERATIONS+1):
 
-            for i in range(ITERATIONS+1):
+            # Progression bar
+            #if i%5 == 0 or i == ITERATIONS:
+            printProgressBar(i, ITERATIONS, prefix = 'Progress:', suffix = 'Complete', length = 50)
 
-                # Progression bar
-                #if i%10 == 0 or i == ITERATIONS:
-                printProgressBar(i, ITERATIONS, prefix = 'Progress:', suffix = 'Complete', length = 50)
+            # SA
+            starting_route = copy.deepcopy(initial_route)
+            best_route = simulated_annealing(N, starting_route, schedule, markov_length, T_START)
 
-                # SA
-                starting_route = copy.deepcopy(initial_route)
-                best_route = simulated_annealing(N, starting_route, schedule, markov_length, t_start)
-
-                # Save results
-                with open(file_name, 'a') as resultsFile:
-                    writer = csv.writer(resultsFile)
-                    writer.writerow([schedule, markov_length, t_start, best_route.get_length()])
-            print()
+            # Save results
+            with open(file_name, 'a') as resultsFile:
+                writer = csv.writer(resultsFile)
+                writer.writerow([schedule, markov_length, T_START, best_route.get_length()])
         print()

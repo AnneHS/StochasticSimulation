@@ -137,7 +137,7 @@ def cooling_schedule(t_start, current_iteration, type):
     - alpha op basis van iteraties?
     '''
     if type == 'linear':
-        alpha = t_start/ 1000000
+        alpha = t_start/ 10000
         t_current = t_start - alpha * current_iteration # multiplicative
         # TODO: additive
 
@@ -149,7 +149,7 @@ def cooling_schedule(t_start, current_iteration, type):
     elif type == 'log':
         alpha = 5
         t_current =  t_start/(1+alpha*np.log(current_iteration+1)) #multiplicative
-        # TODO: additive
+        # TODO: additiveIk
 
     elif type == 'quadratic':
         alpha = 0.001
