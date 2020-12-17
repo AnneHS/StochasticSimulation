@@ -147,7 +147,7 @@ def cooling_schedule(t_start, current_iteration, type, max_iter):
         # TODO: additive
 
     elif type == 'log':
-        alpha = 5
+        alpha = 50
         t_current =  t_start/(1+alpha*np.log(current_iteration+1)) #multiplicative
         # TODO: additiveIk
 

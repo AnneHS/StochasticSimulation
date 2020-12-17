@@ -58,9 +58,7 @@ def simulated_annealing(N, initial_route, cooling_type, markov_length, t_start, 
     best_route = initial_route      # best route so far
     chain_length = 0                # current Markov chain length
     current_iteration = 0           # current iteration
-    k = 0
-
-    while t_current > T_MIN and k < max_iter:
+    while t_current > T_MIN and current_iteration < max_iter:
         for i in range(N-3):
             for j in range(i+2, N-1):
 
@@ -85,18 +83,21 @@ def simulated_annealing(N, initial_route, cooling_type, markov_length, t_start, 
                 # Outer-loop stopping condition: temperature
                 if t_current <= T_MIN:
                     return best_route
-                k += 1
+                if current_iteration >= max_iter:
+                    return best_route
+                #k += 1
     return best_route
 
 if __name__ == '__main__':
 
     problem = 'a280'            # problem type 'eil51'
-    schedule = 'linear'          #'linear', 'exponential', 'log', 'quadratic'
+    schedule = 'log'          #'linear', 'exponential', 'log', 'quadratic'
 
     # Params
-    ITERATIONS = 10 #300                               # SA iterations
-    MARKOV_LENGTHS = (np.arange(10, 101, 10))
-    MARKOV_LENGTHS = np.insert(MARKOV_LENGTHS, 0, 1)
+    ITERATIONS = 100 #300                               # SA iterations
+    #MARKOV_LENGTHS = (np.arange(10, 101, 10))
+    MARKOV_LENGTHS= [1, 10, 20, 30, 40, 50, 60, 70, 80]
+    #MARKOV_LENGTHS = np.insert(MARKOV_LENGTHS, 0, 1)
     print(MARKOV_LENGTHS)
     T_MIN = 0.001
     T_START = 300
@@ -123,8 +124,8 @@ if __name__ == '__main__':
         for i in range(ITERATIONS+1):
 
             # Progression bar
-            #if i%5 == 0 or i == ITERATIONS:
-            printProgressBar(i, ITERATIONS, prefix = 'Progress:', suffix = 'Complete', length = 50)
+            if i%5 == 0 or i == ITERATIONS:
+                printProgressBar(i, ITERATIONS, prefix = 'Progress:', suffix = 'Complete', length = 50)
 
             # SA
             starting_route = copy.deepcopy(initial_route)
