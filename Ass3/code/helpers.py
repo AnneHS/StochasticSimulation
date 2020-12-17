@@ -126,7 +126,7 @@ def plot_route(cities, route, problem):
     plt.savefig("../figures/route_eil51.jpg")
     plt.show()
 
-def cooling_schedule(t_start, current_iteration, type):
+def cooling_schedule(t_start, current_iteration, type, max_iter):
     '''
     Used for SA: returns new temperature given the starting temperature,
     current SA iteration, alpha and the chosen cooling schedule.
@@ -137,7 +137,7 @@ def cooling_schedule(t_start, current_iteration, type):
     - alpha op basis van iteraties?
     '''
     if type == 'linear':
-        alpha = t_start/ 10000
+        alpha = t_start/max_iter
         t_current = t_start - alpha * current_iteration # multiplicative
         # TODO: additive
 
