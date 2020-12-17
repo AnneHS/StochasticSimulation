@@ -10,7 +10,6 @@ For cooling schedule comparison x=iterations, y=length
 problem = 'a280'
 cooling_schedules = ['linear'] #, 'exponential', 'log', 'quadratic']
 
-means = []
 for schedule in cooling_schedules:
     file_name = '../results/single_run/{}_{}.csv'.format(problem, schedule)
     df = pd.read_csv(file_name)
