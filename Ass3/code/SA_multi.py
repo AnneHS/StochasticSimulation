@@ -97,7 +97,7 @@ if __name__ == '__main__':
     ITERATIONS = 10 #300                               # SA iterations
     MARKOV_LENGTHS = np.arange(1, 151, 10)
     print(MARKOV_LENGTHS)
-    T_MIN = 0.0000001
+    T_MIN = 0.0001
     T_START = 300
 
     # Load problem
