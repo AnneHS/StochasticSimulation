@@ -142,17 +142,17 @@ def cooling_schedule(t_start, current_iteration, type, max_iter):
         # TODO: additive
 
     elif type == 'exponential':
-        alpha = 0.999995
+        alpha = 0.9999
         t_current = t_start * alpha**current_iteration # multiplicative
         # TODO: additive
 
     elif type == 'log':
-        alpha = 5
+        alpha = 3
         t_current =  t_start/(1+alpha*np.log(current_iteration+1)) #multiplicative
         # TODO: additiveIk
 
     elif type == 'quadratic':
-        alpha = 0.001
+        alpha = 0.00000001
         t_current = t_start/(1+ alpha * current_iteration**2) #multiplicative
         # TODO: additive
 
