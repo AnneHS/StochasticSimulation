@@ -94,15 +94,9 @@ if __name__ == '__main__':
     schedule = 'linear'          #'linear', 'exponential', 'log', 'quadratic'
 
     # Params
-    ITERATIONS = 300                                # SA iterations
+    ITERATIONS = 10 #300                               # SA iterations
     MARKOV_LENGTHS = 1                             # Of list gebruiken?
     T_MIN = 0.0000001
-    TEMPERATURES = {}                               # Starting temperatures
-    TEMPERATURES["linear"] = [530, 850, 1700]
-    TEMPERATURES["exponential"] = [150, 220, 450]
-    TEMPERATURES["log"] = [120, 180, 370]
-    TEMPERATURES["quadratic"] = [530, 850, 1700]
-
     #starting_temperatures = TEMPERATURES[schedule]
     starting_temperatures = [300]
 
@@ -130,8 +124,8 @@ if __name__ == '__main__':
             for i in range(ITERATIONS+1):
 
                 # Progression bar
-                if i%10 == 0 or i == ITERATIONS-1:
-                    printProgressBar(i, ITERATIONS-1, prefix = 'Progress:', suffix = 'Complete', length = 50)
+                #if i%10 == 0 or i == ITERATIONS:
+                printProgressBar(i, ITERATIONS, prefix = 'Progress:', suffix = 'Complete', length = 50)
 
                 # SA
                 starting_route = copy.deepcopy(initial_route)
