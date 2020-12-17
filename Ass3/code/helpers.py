@@ -2,8 +2,10 @@ import sys
 import numpy as np
 import math
 import matplotlib.pyplot as plt
+import copy
+import random
 
-from city import City
+from city import City, Route
 
 def extract_cities(node_coord_section):
     ''' Extract cities and coordinates from input file'''
@@ -75,6 +77,16 @@ def load(problem):
 
     return N, adjacency_matrix, opt_route, opt_route_length, cities
 
+def create_initial_route(N, adjacency_matrix, cities):
+
+    initial_route = Route(N, adjacency_matrix)
+    shuffled = copy.deepcopy(cities)
+    random.shuffle(shuffled)
+    for city in shuffled:
+        initial_route.add(city)
+
+    return initial_route
+
 def plot_route(cities, route):
     '''
     Plots route
@@ -112,7 +124,7 @@ def plot_route(cities, route):
 
     plt.show()
 
-def cooling_schedule(t_start, iteration, alpha, type):
+def cooling_schedule(t_start, current_iteration, type, t_min):
     '''
     Used for SA: returns new temperature given the starting temperature,
     current SA iteration, alpha and the chosen cooling schedule.
@@ -123,19 +135,45 @@ def cooling_schedule(t_start, iteration, alpha, type):
     - alpha op basis van iteraties?
     '''
     if type == 'linear':
-        t_current = t_start - alpha * iteration # multiplicative
+        alpha = 1
+        t_current = t_start - alpha * current_iteration # multiplicative
         # TODO: additive
 
     elif type == 'exponential':
-        t_current = t_start * alpha**iteration # multiplicative
+        alpha = 0.9
+        t_current = t_start * alpha**current_iteration # multiplicative
         # TODO: additive
 
     elif type == 'log':
-        t_current =  T_START/(1+ALPHA*log(iteration+1)) #multiplicative
+        alpha = 50
+        t_current =  t_start/(1+alpha*log(current_iteration+1)) #multiplicative
         # TODO: additive
 
     elif type == 'quardratic':
-        t_current = T_START/(1+ alpha * iterations**2) #multiplicative
+        alpha = 1
+        t_current = t_start/(1+ alpha * current_iteration**2) #multiplicative
         # TODO: additive
 
     return t_current
+
+def printProgressBar (iteration, total, prefix = '', suffix = '', decimals = 1, length = 100, fill = '█', printEnd = "\r"):
+    """
+    Call in a loop to create terminal progress bar
+    @params:
+        iteration   - Required  : current iteration (Int)
+        total       - Required  : total iterations (Int)
+        prefix      - Optional  : prefix string (Str)
+        suffix      - Optional  : suffix string (Str)
+        decimals    - Optional  : positive number of decimals in percent complete (Int)
+        length      - Optional  : character length of bar (Int)
+        fill        - Optional  : bar fill character (Str)
+        printEnd    - Optional  : end character (e.g. "\r", "\r\n") (Str)
+    """
+    # source: https://stackoverflow.com/questions/3173320/text-progress-bar-in-the-console
+    percent = ("{0:." + str(decimals) + "f}").format(100 * (iteration / float(total)))
+    filledLength = int(length * iteration // total)
+    bar = fill * filledLength + '-' * (length - filledLength)
+    print(f'\r{prefix} |{bar}| {percent}% {suffix}', end = printEnd)
+    # Print New Line on Complete
+    if iteration == total:
+        print()
