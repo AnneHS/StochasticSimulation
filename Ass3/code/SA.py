@@ -31,9 +31,9 @@ https://nathanrooy.github.io/posts/2020-05-14/simulated-annealing-with-python/
 - resultaten opslaan: beste route + lengte
 '''
 
-T_START = 5                   # starting temperature
+T_START = 100                   # starting temperature
 T_MIN = 0.0000001               # min temperature
-COOLING_SCHEDULE = 'exponential'     # 'linear', 'exponential', 'log', 'quadratic'
+COOLING_SCHEDULE = 'linear'     # 'linear', 'exponential', 'log', 'quadratic'
 MAX_ITERATION = 1000           # currently not used --> now used for alpha
 ALPHA = True                   # alpha used for cooling, True then alpha on basis of iterations
 if ALPHA:
@@ -52,6 +52,8 @@ def simulated_annealing(N, initial_route, cooling_type, non_monotonic):
     current_route = initial_route   # current route
     best_route = initial_route      # best route so far
 
+    trial_count = 0
+    acceptance_count = 0
     k=0
     while t_current > T_MIN:
         for i in range(N-3):
@@ -59,13 +61,19 @@ def simulated_annealing(N, initial_route, cooling_type, non_monotonic):
                 new_route = current_route.two_opt(i, j)
 
                 # Route acceptance
+                trial_count+=1
                 length_difference = current_route.get_length() - new_route.get_length()
                 if length_difference > 0:
                     current_route = new_route
                     best_route = new_route
+                    acceptance_count+=1
                 elif random.uniform(0, 1) < math.exp(length_difference/t_current):
                     current_route = new_route
+                    acceptance_count+=1
 
+                # stop condition of inner loop met? --> MARKOV_CHAIN
+
+                print(acceptance_count/trial_count)
                 # Cooling: adjust temperature
                 t_current = cooling_schedule(T_START, k, ALPHA, cooling_type)
 
