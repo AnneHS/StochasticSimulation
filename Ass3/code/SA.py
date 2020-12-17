@@ -3,6 +3,7 @@ import random
 import copy
 import math
 import random
+import matplotlib.pyplot as plt
 
 from city import City, Route
 from helpers import load, plot_route, cooling_schedule
@@ -31,18 +32,11 @@ https://nathanrooy.github.io/posts/2020-05-14/simulated-annealing-with-python/
 - resultaten opslaan: beste route + lengte
 '''
 
-T_START = 5                   # starting temperature
-T_MIN = 0.0000001               # min temperature
+T_START = 70                   # starting temperature
+T_MIN = 0.00001               # min temperature
 COOLING_SCHEDULE = 'exponential'     # 'linear', 'exponential', 'log', 'quadratic'
-MAX_ITERATION = 1000           # currently not used --> now used for alpha
-ALPHA = True                   # alpha used for cooling, True then alpha on basis of iterations
-if ALPHA:
-    if COOLING_SCHEDULE == 'linear':
-        ALPHA = T_START/MAX_ITERATION
-    elif COOLING_SCHEDULE == 'exponential':
-        ALPHA = 0.9 # TODO
-    else:
-        ALPHA = 0.05
+MAX_ITERATION = 2000000           # currently not used --> now used for alpha
+# alpha used for cooling, True then alpha on basis of iterations
 
 def simulated_annealing(N, initial_route, cooling_type, non_monotonic):
     '''
@@ -53,7 +47,7 @@ def simulated_annealing(N, initial_route, cooling_type, non_monotonic):
     best_route = initial_route      # best route so far
 
     k=0
-    while t_current > T_MIN:
+    while t_current > T_MIN and k < MAX_ITERATION:
         for i in range(N-3):
             for j in range(i+2, N-1):
                 new_route = current_route.two_opt(i, j)
@@ -67,19 +61,12 @@ def simulated_annealing(N, initial_route, cooling_type, non_monotonic):
                     current_route = new_route
 
                 # Cooling: adjust temperature
-                t_current = cooling_schedule(T_START, k, ALPHA, cooling_type)
+                t_current = cooling_schedule(T_START, k, cooling_type,T_MIN)
 
                 if k%500 == 0:
                     print('iteration: {}'.format(k))
                     print('t: {}'.format(t_current))
                     print('best: {}\n'.format(best_route.get_length()))
-
-                '''
-                if non_monotonic:
-                    current_length = current_route.get_length()
-                    best_length = best_route.get_length()
-                    t_current *= (1+(current_length-best_length)/current_length)
-                '''
 
                 # SA stopping condition
                 if t_current <= T_MIN:
@@ -103,7 +90,6 @@ for city in shuffled:
 
 # Start SA
 route = simulated_annealing(N, initial_route, COOLING_SCHEDULE, non_monotonic=False)
-print(ALPHA)
 
 # Plot route on 2D plane
-plot_route(cities, route)
+plot = plot_route(cities, route, problem)

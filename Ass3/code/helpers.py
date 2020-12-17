@@ -87,7 +87,7 @@ def create_initial_route(N, adjacency_matrix, cities):
 
     return initial_route
 
-def plot_route(cities, route):
+def plot_route(cities, route, problem):
     '''
     Plots route
     - subplot 1: location of cities on 2d plane
@@ -117,11 +117,13 @@ def plot_route(cities, route):
                             connectionstyle="arc3"))
 
     # Textbox
-    textstr = "N nodes: {}\nTotal length: {}".format(route.N, route.get_length())
+    textstr = "N nodes: {}\nTotal length: {}".format(route.N, np.round(route.get_length(),2))
     props = dict(boxstyle='round', facecolor='wheat', alpha=0.5)
     ax[1].text(0.05, 0.95, textstr, transform=ax[1].transAxes, fontsize=14, # Textbox
         verticalalignment='top', bbox=props)
 
+    savetitle = "../figures/route_" + problem + ".jpg"
+    plt.savefig("../figures/route_eil51.jpg")
     plt.show()
 
 def cooling_schedule(t_start, current_iteration, type, t_min):
@@ -135,22 +137,22 @@ def cooling_schedule(t_start, current_iteration, type, t_min):
     - alpha op basis van iteraties?
     '''
     if type == 'linear':
-        alpha = 1
+        alpha = t_start/ 1000000
         t_current = t_start - alpha * current_iteration # multiplicative
         # TODO: additive
 
     elif type == 'exponential':
-        alpha = 0.9
+        alpha = 0.999995
         t_current = t_start * alpha**current_iteration # multiplicative
         # TODO: additive
 
     elif type == 'log':
-        alpha = 50
-        t_current =  t_start/(1+alpha*log(current_iteration+1)) #multiplicative
+        alpha = 5
+        t_current =  t_start/(1+alpha*np.log(current_iteration+1)) #multiplicative
         # TODO: additive
 
-    elif type == 'quardratic':
-        alpha = 1
+    elif type == 'quadratic':
+        alpha = 0.001
         t_current = t_start/(1+ alpha * current_iteration**2) #multiplicative
         # TODO: additive
 
