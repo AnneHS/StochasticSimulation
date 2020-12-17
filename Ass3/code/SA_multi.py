@@ -59,6 +59,7 @@ def simulated_annealing(N, initial_route, cooling_type, markov_length, t_start):
     chain_length = 0                # current Markov chain length
     current_iteration = 0           # current iteration
 
+    MAX_ITER = 1000
     while t_current > T_MIN:
         for i in range(N-3):
             for j in range(i+2, N-1):
@@ -77,7 +78,7 @@ def simulated_annealing(N, initial_route, cooling_type, markov_length, t_start):
 
                 # Inner-loop stopping condition: Markov Chain length
                 if chain_length == markov_length:
-                    t_current = cooling_schedule(t_start, current_iteration, cooling_type)
+                    t_current = cooling_schedule(t_start, current_iteration, cooling_type, MAX_ITER)
                     chain_length=0
                     current_iteration+=1
 
@@ -94,10 +95,11 @@ if __name__ == '__main__':
     schedule = 'linear'          #'linear', 'exponential', 'log', 'quadratic'
 
     # Params
-    ITERATIONS = 10 #300                               # SA iterations
-    MARKOV_LENGTHS = np.arange(1, 102, 10)
+    ITERATIONS = 100 #300                               # SA iterations
+    # = np.arange(0, 51, 5)
+    MARKOV_LENGTHS = [1, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50]
     T_MIN = 0.001
-    T_START = 200
+    T_START = 300
 
     # Load problem
     N, adjacency_matrix, opt_path, opt_path_len, cities  = load(problem)

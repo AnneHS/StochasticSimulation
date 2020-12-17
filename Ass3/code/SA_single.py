@@ -55,10 +55,13 @@ def simulated_annealing(N, initial_route, cooling_type, t_start):
     current_route = initial_route   # current route
     best_route = initial_route      # best route so far
 
-    route_lengths = [initial_route.get_length()]
+    best_route_lengths = [initial_route.get_length()]
+    current_route_lengths = [initial_route.get_length()]
+
+    MAX_ITER = 10000
 
     k=0
-    while t_current > T_MIN and k < MAX_ITERATION:
+    while t_current > T_MIN and k < MAX_ITER:
         for i in range(N-3):
             for j in range(i+2, N-1):
                 new_route = current_route.two_opt(i, j)
@@ -72,10 +75,11 @@ def simulated_annealing(N, initial_route, cooling_type, t_start):
                 elif random.uniform(0, 1) < math.exp(length_difference/t_current):
                     current_route = new_route
 
-                route_lengths+=[current_route.get_length()]
+                current_route_lengths+=[current_route.get_length()]
+                best_route_lengths+=[best_route.get_length()]
 
                 # Cooling: adjust temperature
-                t_current = cooling_schedule(T_START, k, cooling_type)
+                t_current = cooling_schedule(T_START, k, cooling_type, MAX_ITER)
                 print("Lenght: {}".format(best_route.get_length()))
                 '''
                 if k%10== 0:
@@ -86,11 +90,11 @@ def simulated_annealing(N, initial_route, cooling_type, t_start):
 
                 # SA stopping condition
                 if t_current <= T_MIN:
-                    return best_route, route_lengths
+                    return best_route, current_route_lengths, best_route_lengths
 
                 k+=1
 
-    return best_route, route_lengths
+    return best_route, current_route_lengths, best_route_lengths
 
 if __name__ == '__main__':
 
@@ -117,11 +121,11 @@ if __name__ == '__main__':
 
     for i in range(ITERATIONS):
         starting_route = copy.deepcopy(initial_route)
-        best_route, route_lengths = simulated_annealing(N, starting_route, schedule, T_START)
+        best_route, current_route_lengths, best_route_lengths = simulated_annealing(N, starting_route, schedule, T_START)
         # Save results
         with open(file_name, 'a') as resultsFile:
             writer = csv.writer(resultsFile)
-            writer.writerow(route_lengths)
+            writer.writerow([current_route_lengths, best_route_lengths])
 
     # Plot route on 2D plane
     #plot_route(cities, route)
