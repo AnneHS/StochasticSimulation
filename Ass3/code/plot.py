@@ -16,7 +16,7 @@ for schedule in cooling_schedules:
 
     means = df.mean(axis=0).to_numpy()
     stdev = df.std(axis=0).to_numpy()
-    iterations = np.linspace(0, 6001, 6002)
+    iterations = np.linspace(0, 6001, 6002) # 6002 = length means
     print(iterations)
     plt.plot(iterations, means)
     plt.fill_between(iterations, means-stdev, means+stdev,alpha=.1,)
