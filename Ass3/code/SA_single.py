@@ -7,7 +7,8 @@ import os
 import csv
 
 from city import City, Route
-from helpers import load, plot_route, cooling_schedule, create_initial_route, printProgressBar
+from helpers import load, plot_route, cooling_schedule, create_initial_route
+
 '''
 TODO:
 In all cases, you must start with relatively small problems, so that you can
@@ -31,11 +32,10 @@ https://nathanrooy.github.io/posts/2020-05-14/simulated-annealing-with-python/
 - discussion voor alpha/T etc.
 - resultaten opslaan: beste route + lengte
 '''
-
 '''
-T_START = 100                   # starting temperature
+T_START = 5                   # starting temperature
 T_MIN = 0.0000001               # min temperature
-COOLING_SCHEDULE = 'linear'     # 'linear', 'exponential', 'log', 'quadratic'
+COOLING_SCHEDULE = 'exponential'     # 'linear', 'exponential', 'log', 'quadratic'
 MAX_ITERATION = 1000           # currently not used --> now used for alpha
 ALPHA = True                   # alpha used for cooling, True then alpha on basis of iterations
 if ALPHA:
@@ -47,98 +47,81 @@ if ALPHA:
         ALPHA = 0.05
 '''
 
-
-
-def simulated_annealing(N, initial_route, cooling_type, markov_length, t_start):
+def simulated_annealing(N, initial_route, cooling_type, t_start):
     '''
     Simulated annealing with 2-opt.
     '''
-    t_current = t_start             # current temperature
+    t_current = T_START             # current temperature
     current_route = initial_route   # current route
     best_route = initial_route      # best route so far
-    chain_length = 0                # current Markov chain length
-    current_iteration = 0           # current iteration
 
+    route_lengths = [initial_route.get_length()]
+
+    k=0
     while t_current > T_MIN:
         for i in range(N-3):
             for j in range(i+2, N-1):
-
-                # New route
                 new_route = current_route.two_opt(i, j)
-                chain_length+=1
 
                 # Route acceptance
                 length_difference = current_route.get_length() - new_route.get_length()
                 if length_difference > 0:
                     current_route = new_route
-                    best_route = new_route
+                    if new_route.get_length() < best_route.get_length():
+                        best_route = new_route
                 elif random.uniform(0, 1) < math.exp(length_difference/t_current):
                     current_route = new_route
 
-                # Inner-loop stopping condition: Markov Chain length
-                if chain_length == markov_length:
-                    t_current = cooling_schedule(t_start, current_iteration, cooling_type, T_MIN)
-                    chain_length=0
-                    current_iteration+=1
+                route_lengths+=[current_route.get_length()]
 
-                # Outer-loop stopping condition: temperature
+                # Cooling: adjust temperature
+                t_current = cooling_schedule(T_START, k, cooling_type)
+                print("Lenght: {}".format(best_route.get_length()))
+                '''
+                if k%10== 0:
+                    print('iteration: {}'.format(k))
+                    print('t: {}'.format(t_current))
+                    print('best: {}\n'.format(best_route.get_length()))
+                '''
+
+                # SA stopping condition
                 if t_current <= T_MIN:
-                    return best_route
+                    return best_route, route_lengths
 
+                k+=1
 
-    return best_route
+    return best_route, route_lengths
 
 if __name__ == '__main__':
 
-    problem = 'eil51'            # problem type
+    problem = 'a280'            # problem type 'eil51'
     schedule = 'linear'          #'linear', 'exponential', 'log', 'quadratic'
 
     # Params
-    ITERATIONS = 100                                # SA iterations
-    MARKOV_LENGTHS = 10                             # Of list gebruiken?
+    ITERATIONS = 10                               # SA iterations
     T_MIN = 0.0000001
-    TEMPERATURES = {}                               # Starting temperatures
-    TEMPERATURES["linear"] = [530, 850, 1700]
-    TEMPERATURES["exponential"] = [150, 220, 450]
-    TEMPERATURES["log"] = [120, 180, 370]
-    TEMPERATURES["quadratic"] = [530, 850, 1700]
-
-    starting_temperatures = TEMPERATURES[schedule]
+    T_START = 300
 
     # Load problem
     N, adjacency_matrix, opt_path, opt_path_len, cities  = load(problem)
+    print(adjacency_matrix)
     print('Problem: {} \nN: {} \nOptimal length: {}\n'.format(problem, N, opt_path_len))
 
     # Create random initial route
     initial_route = create_initial_route(N, adjacency_matrix, cities)
 
     # Open/create results file
-    file_name = '../results/{}_{}'.format(problem, schedule)
+    file_name = '../results/single_run/{}_{}.csv'.format(problem, schedule)
     if not os.path.isfile(file_name):
             open(file_name, 'x')
 
-    # Run SA
-    print('Running for cooling_schedule: {}'.format(schedule))
+    for i in range(ITERATIONS):
+        starting_route = copy.deepcopy(initial_route)
+        best_route, route_lengths = simulated_annealing(N, starting_route, schedule, T_START)
+        # Save results
+        with open(file_name, 'a') as resultsFile:
+            writer = csv.writer(resultsFile)
+            writer.writerow(route_lengths)
 
-    for markov_length in range(1, MARKOV_LENGTHS+1):
-        print('Markov length: {}/{}'.format(markov_length, MARKOV_LENGTHS))
-
-        for t_start in starting_temperatures:
-            print('Starting temperature: {}'.format(t_start))
-
-            for i in range(ITERATIONS):
-
-                # Progression bar
-                if i%10 == 0 or i == ITERATIONS-1:
-                    printProgressBar(i, ITERATIONS-1, prefix = 'Progress:', suffix = 'Complete', length = 50)
-
-                # SA
-                starting_route = copy.deepcopy(initial_route)
-                best_route = simulated_annealing(N, starting_route, schedule, markov_length, t_start)
-
-                # Save results
-                with open(file_name, 'a') as resultsFile:
-                    writer = csv.writer(resultsFile)
-                    writer.writerow([schedule, markov_length, t_start, best_route.get_length()])
-            print()
-        print()
+    # Plot route on 2D plane
+    #plot_route(cities, route)

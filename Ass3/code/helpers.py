@@ -124,7 +124,7 @@ def plot_route(cities, route):
 
     plt.show()
 
-def cooling_schedule(t_start, current_iteration, type, t_min):
+def cooling_schedule(t_start, current_iteration, type):
     '''
     Used for SA: returns new temperature given the starting temperature,
     current SA iteration, alpha and the chosen cooling schedule.
@@ -135,12 +135,14 @@ def cooling_schedule(t_start, current_iteration, type, t_min):
     - alpha op basis van iteraties?
     '''
     if type == 'linear':
-        alpha = 1
+        #t_current = t_start * (max_iterations - current_iteration)/max_iterations
+        alpha = 0.05
         t_current = t_start - alpha * current_iteration # multiplicative
         # TODO: additive
 
     elif type == 'exponential':
         alpha = 0.9
+
         t_current = t_start * alpha**current_iteration # multiplicative
         # TODO: additive
 
