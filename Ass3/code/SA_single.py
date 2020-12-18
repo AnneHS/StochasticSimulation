@@ -58,7 +58,7 @@ def simulated_annealing(N, initial_route, cooling_type, t_start):
     best_route_lengths = [initial_route.get_length()]
     current_route_lengths = [initial_route.get_length()]
 
-    MAX_ITER = 10000
+    MAX_ITER = 100000
 
     k=0
     while t_current > T_MIN and k < MAX_ITER:
@@ -80,7 +80,8 @@ def simulated_annealing(N, initial_route, cooling_type, t_start):
 
                 # Cooling: adjust temperature
                 t_current = cooling_schedule(T_START, k, cooling_type, MAX_ITER)
-                print("Lenght: {}".format(best_route.get_length()))
+
+                #print("Lenght: {}".format(best_route.get_length()))
                 '''
                 if k%10== 0:
                     print('iteration: {}'.format(k))
@@ -90,20 +91,20 @@ def simulated_annealing(N, initial_route, cooling_type, t_start):
 
                 # SA stopping condition
                 if t_current <= T_MIN:
-                    return best_route, current_route_lengths, best_route_lengths
+                    return best_route.get_length(), current_route_lengths, best_route_lengths
 
                 k+=1
 
-    return best_route, current_route_lengths, best_route_lengths
+    return best_route.get_length() , current_route_lengths, best_route_lengths
 
 if __name__ == '__main__':
 
     problem = 'a280'            # problem type 'eil51'
-    schedule = 'linear'          #'linear', 'exponential', 'log', 'quadratic'
+    schedule = 'log'          #'linear', 'exponential', 'log', 'quadratic'
 
     # Params
-    ITERATIONS = 10                               # SA iterations
-    T_MIN = 0.0000001
+    RUNS = 201                    # SA iterations
+    T_MIN = 0.0001
     T_START = 300
 
     # Load problem
@@ -119,13 +120,13 @@ if __name__ == '__main__':
     if not os.path.isfile(file_name):
             open(file_name, 'x')
 
-    for i in range(ITERATIONS):
+    for i in range(RUNS):
         starting_route = copy.deepcopy(initial_route)
         best_route, current_route_lengths, best_route_lengths = simulated_annealing(N, starting_route, schedule, T_START)
         # Save results
         with open(file_name, 'a') as resultsFile:
             writer = csv.writer(resultsFile)
-            writer.writerow([current_route_lengths, best_route_lengths])
-
+            writer.writerow(best_route_lengths)
+        print('run: ', i, 'with best route length: ', best_route )
     # Plot route on 2D plane
     #plot_route(cities, route)
