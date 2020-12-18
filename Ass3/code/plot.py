@@ -43,28 +43,40 @@ plt.savefig(savefig, dpi=300)
 plt.show()
 '''
 
-def plot_markov(problem, cooling_schedule):
+def plot_markov(problem):
 
-    file_name = '../results/{}_{}.csv'.format(problem, cooling_schedule)
-    df = pd.read_csv(file_name)
-    df.columns=['schedule', 'markov_length', 't_start', 'best_route_length']
-    markov_lengths = df.markov_length.unique()
+    cooling_schedules = ['log', 'exponential']
 
-    n=101
+    plt.figure()
+    for schedule in cooling_schedules:
+        file_name = '../results/{}_{}.csv'.format(problem, schedule)
+        df = pd.read_csv(file_name)
+        df.columns=['schedule', 'markov_length', 't_start', 'best_route_length']
+        markov_lengths = df.markov_length.unique()
 
-    means = df.groupby('markov_length')['best_route_length'].mean()
-    variance = df.groupby('markov_length')['best_route_length'].var(ddof = 1)
+        n=101
 
-    l = 1.96 # For a CI of 95%
-    #sample_variance = stdevs/(n-1)
-    a = (l*variance)/np.sqrt(n)
-    plt.plot(markov_lengths, means, label = cooling_schedule)
-    plt.fill_between(markov_lengths, means-a, means+a, alpha=.2)
-    plt.xlim([1,max(markov_lengths)])
-    plt.ylim([0,None])
-    plt.legend()
+        means = df.groupby('markov_length')['best_route_length'].mean()
+        variance = df.groupby('markov_length')['best_route_length'].var(ddof = 1)
+
+        l = 1.96 # For a CI of 95%
+        #sample_variance = stdevs/(n-1)
+        a = (l*variance)/np.sqrt(n)
+        plt.plot(markov_lengths, means, label = schedule)
+        plt.fill_between(markov_lengths, means-a, means+a, alpha=.2)
+        plt.xlim([1,max(markov_lengths)])
+        plt.ylim([0,None])
+        plt.legend()
+
+        #savefig = "../figures/Markov_{}_{}.jpg".format(problem, cooling_schedule)
+        #plt.savefig(savefig, dpi=300)
+    plt.xlabel('Markov')
+    plt.ylabel('length route')
+    plt.title('Problem : ' +problem)
+    savefig = "../figures/Markov_{}.jpg".format(problem)
+    plt.savefig(savefig, dpi=300)
     plt.show()
 
-problem = 'a280'
+problem = 'eil51'
 cooling_schedule = 'log'
-plot_markov(problem, cooling_schedule)
+plot_markov(problem)

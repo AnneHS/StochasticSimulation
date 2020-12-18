@@ -91,7 +91,7 @@ def simulated_annealing(N, initial_route, cooling_type, markov_length, t_start, 
 if __name__ == '__main__':
 
     problem = 'eil51'            # problem type 'eil51'
-    schedule = 'log'          #'linear', 'exponential', 'log', 'quadratic'
+    schedule = 'exponential'          #'linear', 'exponential', 'log', 'quadratic'
 
     # Params
     ITERATIONS = 100 #300                               # SA iterations
