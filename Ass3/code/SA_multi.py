@@ -120,7 +120,7 @@ if __name__ == '__main__':
 
     for markov_length in MARKOV_LENGTHS:
         print('Markov length: {}'.format(markov_length))
-
+        
         for i in range(ITERATIONS+1):
 
             # Progression bar
