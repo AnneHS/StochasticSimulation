@@ -90,18 +90,17 @@ def simulated_annealing(N, initial_route, cooling_type, markov_length, t_start, 
 
 if __name__ == '__main__':
 
-    problem = 'a280'            # problem type 'eil51'
+    problem = 'eil51'            # problem type 'eil51'
     schedule = 'log'          #'linear', 'exponential', 'log', 'quadratic'
 
     # Params
     ITERATIONS = 100 #300                               # SA iterations
-    #MARKOV_LENGTHS = (np.arange(10, 101, 10))
     MARKOV_LENGTHS= [1, 10, 20, 30, 40, 50, 60, 70, 80]
     #MARKOV_LENGTHS = np.insert(MARKOV_LENGTHS, 0, 1)
     print(MARKOV_LENGTHS)
     T_MIN = 0.001
     T_START = 300
-    MAX_ITER = 5000
+    MAX_ITER = 1000
 
     # Load problem
     N, adjacency_matrix, opt_path, opt_path_len, cities  = load(problem)
@@ -111,7 +110,7 @@ if __name__ == '__main__':
     initial_route = create_initial_route(N, adjacency_matrix, cities)
 
     # Open/create results file
-    file_name = '../results/{}_{}5000.csv'.format(problem, schedule)
+    file_name = '../results/{}_{}.csv'.format(problem, schedule)
     if not os.path.isfile(file_name):
             open(file_name, 'x')
 
@@ -120,7 +119,7 @@ if __name__ == '__main__':
 
     for markov_length in MARKOV_LENGTHS:
         print('Markov length: {}'.format(markov_length))
-        
+
         for i in range(ITERATIONS+1):
 
             # Progression bar
