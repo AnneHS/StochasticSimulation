@@ -48,27 +48,22 @@ def plot_markov(problem, cooling_schedule):
     file_name = '../results/{}_{}.csv'.format(problem, cooling_schedule)
     df = pd.read_csv(file_name)
     df.columns=['schedule', 'markov_length', 't_start', 'best_route_length']
-    n=100
     markov_lengths = df.markov_length.unique()
 
+    n=101
+
     means = df.groupby('markov_length')['best_route_length'].mean()
-    stdevs = df.groupby('markov_length')['best_route_length'].std()
+    variance = df.groupby('markov_length')['best_route_length'].var(ddof = 1)
 
     l = 1.96 # For a CI of 95%
-    sample_variance = stdevs/(n-1)
-    a = (l*sample_variance)/np.sqrt(n)
-    print(stdevs)
-    print(sample_variance)
-    print(a)
+    #sample_variance = stdevs/(n-1)
+    a = (l*variance)/np.sqrt(n)
     plt.plot(markov_lengths, means, label = cooling_schedule)
     plt.fill_between(markov_lengths, means-a, means+a, alpha=.2)
+    plt.xlim([1,max(markov_lengths)])
+    plt.ylim([0,None])
+    plt.legend()
     plt.show()
-    #print(sample_variance)
-
-    #numerator = []
-    #for i, mean in enumerate(means):
-    #    numerator.append
-    #print(means)
 
 problem = 'a280'
 cooling_schedule = 'log'
