@@ -101,7 +101,7 @@ if __name__ == '__main__':
     print(MARKOV_LENGTHS)
     T_MIN = 0.001
     T_START = 300
-    MAX_ITER = 1000
+    MAX_ITER = 5000
 
     # Load problem
     N, adjacency_matrix, opt_path, opt_path_len, cities  = load(problem)
@@ -111,7 +111,7 @@ if __name__ == '__main__':
     initial_route = create_initial_route(N, adjacency_matrix, cities)
 
     # Open/create results file
-    file_name = '../results/{}_{}.csv'.format(problem, schedule)
+    file_name = '../results/{}_{}5000.csv'.format(problem, schedule)
     if not os.path.isfile(file_name):
             open(file_name, 'x')
 
